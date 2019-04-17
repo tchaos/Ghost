@@ -77,7 +77,8 @@ module.exports = class StripePaymentProcessor {
 
             return api.subscriptions.create(this._stripe, member, {
                 plan,
-                stripeToken: metadata.stripeToken
+                stripeToken: metadata.stripeToken,
+                coupon: metadata.coupon
             });
         });
     }
@@ -89,6 +90,26 @@ module.exports = class StripePaymentProcessor {
 
         return this._ready.then(() => {
             return api.subscriptions.get(this._stripe, member);
+        });
+    }
+
+    removeSubscription(member) {
+        if (!this._stripe) {
+            throw new Error('StripePaymentProcessor must be configured()');
+        }
+
+        return this._ready.then(() => {
+            return api.subscriptions.remove(this._stripe, member);
+        });
+    }
+
+    removeCustomer(member) {
+        if (!this._stripe) {
+            throw new Error('StripePaymentProcessor must be configured()');
+        }
+
+        return this._ready.then(() => {
+            return api.customers.remove(this._stripe, member);
         });
     }
 };
